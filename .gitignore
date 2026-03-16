@@ -4,4 +4,7 @@ __pycache__/
 .DS_Store
 experiments.db
 .env
+checkpoints/
+output/
+datasets/hinglish_conversations.csv
 
