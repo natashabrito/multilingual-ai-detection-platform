@@ -1,462 +1,820 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Text Detector | Multilingual</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0f0f12;
-      --surface: #18181c;
-      --border: #2a2a30;
-      --text: #e4e4e7;
-      --muted: #71717a;
-      --accent: #a78bfa;
-      --accent-dim: #7c3aed;
-      --human: #34d399;
-      --ai: #f87171;
-      --radius: 12px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual AI Detection Platform v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
 
-    body {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      margin: 0;
-      padding: 2rem;
-      line-height: 1.6;
-    }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    .container {
-      max-width: 720px;
-      margin: 0 auto;
-    }
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
 
-    header {
-      margin-bottom: 2.5rem;
-    }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin: 0 0 0.5rem 0;
-      letter-spacing: -0.02em;
-    }
+        .nav-item {
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
 
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
 
-    label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem 3rem;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+        }
 
-    textarea {
-      width: 100%;
-      min-height: 140px;
-      padding: 1rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      font-family: 'DM Sans', system-ui, sans-serif;
-      font-size: 0.95rem;
-      resize: vertical;
-      transition: border-color 0.2s;
-    }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
 
-    textarea::placeholder {
-      color: var(--muted);
-    }
+        .page-title h1 {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+        }
 
-    textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
+        .page-title p {
+            color: var(--text-muted);
+        }
 
-    .actions {
-      display: flex;
-      gap: 0.75rem;
-      align-items: center;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
+        /* Cards & Sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
 
-    button {
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 0.9rem;
-      padding: 0.65rem 1.25rem;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.05s;
-    }
+        .page-section.active {
+            display: block;
+        }
 
-    button:active {
-      transform: scale(0.98);
-    }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
 
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg);
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    .btn-primary:hover {
-      background: var(--accent-dim);
-    }
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
 
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
 
-    .btn-secondary {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid var(--border);
-    }
+        /* Features */
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: var(--text);
+            font-size: 1.1rem;
+            resize: none;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
 
-    .btn-secondary:hover {
-      color: var(--text);
-      border-color: var(--text);
-    }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
-    .status {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
 
-    .result {
-      margin-top: 1.5rem;
-    }
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: scale(1.02);
+        }
 
-    .result-heading {
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      font-size: 0.9rem;
-    }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-    .result-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
 
-    .result-badge {
-      display: inline-block;
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
+        /* Result Visualization */
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
 
-    .result-badge.human {
-      background: rgba(52, 211, 153, 0.2);
-      color: var(--human);
-    }
+        .prob-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
 
-    .result-badge.ai {
-      background: rgba(248, 113, 113, 0.2);
-      color: var(--ai);
-    }
+        .prob-circle span {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
 
-    .prob-bar {
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 0.5rem;
-      max-width: 200px;
-    }
+        .prob-circle label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
 
-    .prob-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
+        .feature-tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    .prob-fill.ai {
-      background: var(--ai);
-    }
+        .info-icon {
+            color: var(--primary);
+            cursor: help;
+            font-size: 0.8rem;
+        }
 
-    .prob-fill.human {
-      background: var(--human);
-    }
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
 
-    .error-msg {
-      background: rgba(248, 113, 113, 0.15);
-      color: var(--ai);
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      margin-top: 1rem;
-    }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #334155;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
 
-    .hidden {
-      display: none;
-    }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
 
-    .lang-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      padding: 0.2rem 0.5rem;
-      background: var(--border);
-      border-radius: 4px;
-      color: var(--muted);
-    }
+        /* Loader */
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
 
-    .feature-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-      font-size: 0.85rem;
-    }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
-    .feature-table th,
-    .feature-table td {
-      padding: 0.4rem 0.5rem;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      vertical-align: top;
-    }
+        /* History List */
+        .history-item {
+            padding: 1rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
 
-    .feature-label {
-      font-weight: 500;
-    }
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
 
-    .feature-score {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--muted);
-      white-space: nowrap;
-    }
+        .badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
 
-    .feature-why {
-      color: var(--muted);
-    }
+        .badge-ai {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
 
-    footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
+        .badge-human {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
 
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
+        /* Batch Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
 
-    footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
+        th {
+            text-align: left;
+            color: var(--text-muted);
+            font-weight: 400;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <h1>AI Text Detector</h1>
-      <p class="subtitle">Detect AI-generated vs human-written text in English, Hindi, and Hinglish.</p>
-    </header>
 
-    <div class="card">
-      <label for="input">Paste or type text to analyze</label>
-      <textarea
-        id="input"
-        placeholder="e.g. This is a sample paragraph. Or: यह एक नमूना पाठ है। Or: Yeh ek Hinglish sample hai."
-        autofocus
-      ></textarea>
-      <div class="actions">
-        <button type="button" class="btn-primary" id="analyze">Analyze</button>
-        <button type="button" class="btn-secondary" id="clear">Clear</button>
-        <span class="status" id="status"></span>
-      </div>
-      <div id="error" class="error-msg hidden"></div>
-      <div id="result" class="result hidden">
-        <div class="result-heading">Result</div>
-        <div class="result-row">
-          <span>Prediction:</span>
-          <span class="result-badge" id="badge">—</span>
-          <span class="lang-tag" id="lang">—</span>
+<body>
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-shield-halved"></i>
+            <span>AI Sentinel</span>
         </div>
-        <div class="result-row">
-          <span>AI probability:</span>
-          <span id="prob">—</span>
+        <div class="nav-item active" onclick="switchPage('detect')">
+            <i class="fas fa-magnifying-glass"></i>
+            <span>AI Detector</span>
         </div>
-        <div class="prob-bar">
-          <div class="prob-fill" id="probFill"></div>
+        <div class="nav-item" onclick="switchPage('batch')">
+            <i class="fas fa-layer-group"></i>
+            <span>Batch Analysis</span>
         </div>
-        <div class="result-heading" style="margin-top: 1.25rem;">Confidence breakdown</div>
-        <table class="feature-table" id="featureTable">
-          <thead>
-            <tr>
-              <th>Feature</th>
-              <th>Score</th>
-              <th>Why</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="feature-label">Burstiness</td>
-              <td class="feature-score" id="feat-burstiness-score">—</td>
-              <td class="feature-why" id="feat-burstiness-why">—</td>
-            </tr>
-            <tr>
-              <td class="feature-label">Entropy</td>
-              <td class="feature-score" id="feat-entropy-score">—</td>
-              <td class="feature-why" id="feat-entropy-why">—</td>
-            </tr>
-            <tr>
-              <td class="feature-label">Syntax depth</td>
-              <td class="feature-score" id="feat-syntax-score">—</td>
-              <td class="feature-why" id="feat-syntax-why">—</td>
-            </tr>
-            <tr>
-              <td class="feature-label">Semantic drift</td>
-              <td class="feature-score" id="feat-drift-score">—</td>
-              <td class="feature-why" id="feat-drift-why">—</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="nav-item" onclick="switchPage('robust')">
+            <i class="fas fa-vial-virus"></i>
+            <span>Robustness Lab</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('trainer')">
+            <i class="fas fa-microchip"></i>
+            <span>Training Center</span>
+        </div>
+        <div class="nav-item" onclick="switchPage('history')">
+            <i class="fas fa-clock-rotate-left"></i>
+            <span>History</span>
+        </div>
+        <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div class="nav-item" style="cursor: default; opacity: 0.7;">
+                <i class="fas fa-circle-check" style="color: var(--accent);"></i>
+                <span>System Online</span>
+            </div>
+        </div>
     </div>
 
-    <footer>
-      <p>Multilingual & paraphrase-aware detector. Supports English, Hindi (Devanagari), and Hinglish. Train your own model with <code>multilingual_ai_detector.py</code>; serve this UI with <code>uvicorn server:app</code>.</p>
-      <p><a href="/docs">API docs</a> · <a href="/health">Health</a></p>
-    </footer>
-  </div>
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Header -->
+        <header>
+            <div class="page-title">
+                <h1 id="current-page-title">AI Detector</h1>
+                <p id="current-page-desc">Analyze text for AI patterns and linguistic markers.</p>
+            </div>
+            <div class="user-info">
+                <div class="feature-tag">
+                    <i class="fas fa-globe"></i>
+                    <span>EN / HI / HINGLISH</span>
+                </div>
+            </div>
+        </header>
 
-  <script>
-    const input = document.getElementById('input');
-    const analyzeBtn = document.getElementById('analyze');
-    const clearBtn = document.getElementById('clear');
-    const statusEl = document.getElementById('status');
-    const errorEl = document.getElementById('error');
-    const resultEl = document.getElementById('result');
-    const badgeEl = document.getElementById('badge');
-    const langEl = document.getElementById('lang');
-    const probEl = document.getElementById('prob');
-    const probFillEl = document.getElementById('probFill');
-    const featBurstScore = document.getElementById('feat-burstiness-score');
-    const featBurstWhy = document.getElementById('feat-burstiness-why');
-    const featEntropyScore = document.getElementById('feat-entropy-score');
-    const featEntropyWhy = document.getElementById('feat-entropy-why');
-    const featSyntaxScore = document.getElementById('feat-syntax-score');
-    const featSyntaxWhy = document.getElementById('feat-syntax-why');
-    const featDriftScore = document.getElementById('feat-drift-score');
-    const featDriftWhy = document.getElementById('feat-drift-why');
+        <!-- Page: Detector -->
+        <div id="detect-page" class="page-section active">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <label style="font-weight: 600;">Input Text</label>
+                    <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                        <span class="tooltiptext">Paste text here. Our AI looks for uniform patterns typical of LLMs
+                            like ChatGPT.</span>
+                    </span>
+                </div>
+                <textarea id="detect-input" placeholder="Paste your article, essay, or message here..."></textarea>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn" id="analyze-btn" onclick="runAnalysis()">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span>Analyze Text</span>
+                        <div class="loader" id="analyze-loader"></div>
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearInput()">Clear</button>
+                </div>
+            </div>
 
-    function setStatus(msg) {
-      statusEl.textContent = msg;
-    }
+            <div id="result-container" style="display: none;">
+                <div class="grid">
+                    <div class="card">
+                        <div class="result-header">
+                            <h3>Detection Result</h3>
+                            <div id="result-badge" class="badge">AI GENERATED</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 2rem;">
+                            <div class="prob-circle" id="prob-circle-ui">
+                                <span id="prob-text">85%</span>
+                                <label>AI Score</label>
+                            </div>
+                            <div style="flex: 1;">
+                                <div class="metric">
+                                    <span>Confidence</span>
+                                    <span id="conf-text">High</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Language</span>
+                                    <span id="lang-text">English</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Length</span>
+                                    <span id="length-text">120 words</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Linguistic Markers <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                                <span class="tooltiptext">These features help explain WHY the text was flagged. Humans
+                                    usually have higher 'Burstiness'.</span>
+                            </span></h3>
+                        <div style="margin-top: 1.5rem;">
+                            <div class="metric">
+                                <span>Burstiness (Variety)</span>
+                                <span id="burst-val">0.42</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="burst-fill" class="progress-fill" style="width: 42%;"></div>
+                            </div>
 
-    function showError(msg) {
-      errorEl.textContent = msg;
-      errorEl.classList.remove('hidden');
-      resultEl.classList.add('hidden');
-    }
+                            <div class="metric">
+                                <span>Semantic Drift</span>
+                                <span id="drift-val">0.12</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div id="drift-fill" class="progress-fill" style="width: 12%;"></div>
+                            </div>
 
-    function hideError() {
-      errorEl.classList.add('hidden');
-    }
+                            <p id="explain-text"
+                                style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4;">
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-    function showResult(data) {
-      hideError();
-      resultEl.classList.remove('hidden');
-      const isAi = data.pred_label === 1;
-      badgeEl.textContent = isAi ? 'AI-generated' : 'Human-written';
-      badgeEl.className = 'result-badge ' + (isAi ? 'ai' : 'human');
-      langEl.textContent = data.pred_lang || '—';
-      const p = (data.prob_ai * 100).toFixed(1);
-      probEl.textContent = p + '%';
-      probFillEl.style.width = p + '%';
-      probFillEl.className = 'prob-fill ' + (isAi ? 'ai' : 'human');
-      if (data.features) {
-        const f = data.features;
-        const safe = (obj, key) => obj && obj[key] ? obj[key] : null;
-        const formatScore = (s) => (s === null || s === undefined ? '—' : (Number(s).toFixed(3)));
-        featBurstScore.textContent = formatScore(safe(f.burstiness, 'score'));
-        featBurstWhy.textContent = safe(f.burstiness, 'explanation') || '—';
-        featEntropyScore.textContent = formatScore(safe(f.entropy, 'score'));
-        featEntropyWhy.textContent = safe(f.entropy, 'explanation') || '—';
-        featSyntaxScore.textContent = formatScore(safe(f.syntax_depth, 'score'));
-        featSyntaxWhy.textContent = safe(f.syntax_depth, 'explanation') || '—';
-        featDriftScore.textContent = formatScore(safe(f.semantic_drift, 'score'));
-        featDriftWhy.textContent = safe(f.semantic_drift, 'explanation') || '—';
-      }
-    }
+                <div class="card">
+                    <h3>Cross-Lingual Verification <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                            <span class="tooltiptext">We translate your text to Hindi and back to English. If the
+                                meaning stays too perfectly identical, it's often AI.</span>
+                        </span></h3>
+                    <div id="crosslingual-results"
+                        style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="variant-card">
+                            <label style="font-size: 0.7rem; color: var(--primary); font-weight: 700;">HINDI
+                                TRANSLATION</label>
+                            <p id="hi-trans-text" style="margin-top: 0.5rem; font-size: 0.9rem;"></p>
+                        </div>
+                        <div class="variant-card">
+                            <label style="font-size: 0.7rem; color: var(--primary); font-weight: 700;">BACK TO
+                                ENGLISH</label>
+                            <p id="back-en-text" style="margin-top: 0.5rem; font-size: 0.9rem;"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    async function analyze() {
-      const text = (input.value || '').trim();
-      if (!text) {
-        showError('Please enter some text.');
-        return;
-      }
-      analyzeBtn.disabled = true;
-      setStatus('Analyzing…');
-      hideError();
-      try {
-        const res = await fetch('/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          showError(data.error || data.detail || 'Request failed.');
-          return;
+        <!-- Page: Batch -->
+        <div id="batch-page" class="page-section">
+            <div class="card">
+                <h3>Bulk Analysis <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                        <span class="tooltiptext">Analyze multiple documents at once. Useful for teachers or content
+                            moderators.</span>
+                    </span></h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Enter multiple texts separated by three
+                    dashes (---).</p>
+                <textarea id="batch-input"
+                    placeholder="Text 1...&#10;---&#10;Text 2...&#10;---&#10;Text 3..."></textarea>
+                <button class="btn" onclick="runBatchAnalysis()">
+                    <i class="fas fa-list-check"></i>
+                    <span>Process Batch</span>
+                </button>
+            </div>
+            <div class="card" id="batch-results-card" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Text Preview</th>
+                            <th>Language</th>
+                            <th>AI Score</th>
+                            <th>Verdict</th>
+                        </tr>
+                    </thead>
+                    <tbody id="batch-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Page: Robustness -->
+        <div id="robust-page" class="page-section">
+            <div class="grid">
+                <div class="card">
+                    <h3>Adversarial Testing <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                            <span class="tooltiptext">Simulate 'attacks' where users try to hide AI patterns using
+                                translation or paraphrasing.</span>
+                        </span></h3>
+                    <textarea id="robust-input" style="height: 150px;"
+                        placeholder="Enter AI text to test..."></textarea>
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn" onclick="runRobustness()">Run Stress Test</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Robustness Metrics</h3>
+                    <div id="robust-metrics-ui" style="display: none;">
+                        <div class="metric"><span>Stability Score</span><span id="stab-score">0.95</span></div>
+                        <div class="metric"><span>Label Flips</span><span id="flip-count">0</span></div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem;">A higher stability
+                            score means the detector is harder to fool.</p>
+                    </div>
+                    <div id="robust-variants" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page: Trainer -->
+        <div id="trainer-page" class="page-section">
+            <div class="card">
+                <h3>Model Orchestrator <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                        <span class="tooltiptext">Advanced: Retrain the model on new data. This is a simulated
+                            environment for demonstration.</span>
+                    </span></h3>
+                <div class="grid" style="margin-top: 1.5rem;">
+                    <div>
+                        <label>Base Model</label>
+                        <select
+                            style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; margin-top: 0.5rem;">
+                            <option>XLM-RoBERTa-Base</option>
+                            <option>mBERT-Uncased</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Training Epochs</label>
+                        <input type="number" id="train-epochs" value="3"
+                            style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; margin-top: 0.5rem;">
+                    </div>
+                </div>
+                <button class="btn" style="margin-top: 2rem;" onclick="launchTraining()">
+                    <i class="fas fa-rocket"></i>
+                    <span>Start Training Job</span>
+                </button>
+            </div>
+            <div id="training-status" class="card" style="display: none;">
+                <h3>Active Job Status</h3>
+                <div class="metric" style="margin-top: 1rem;">
+                    <span id="job-id">JOB-12345</span>
+                    <span id="job-status" style="color: var(--accent);">RUNNING</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="job-progress" class="progress-fill" style="width: 30%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page: History -->
+        <div id="history-page" class="page-section">
+            <div class="card">
+                <h3>Recent Analyses</h3>
+                <div id="history-list" style="margin-top: 1.5rem;">
+                    <p style="color: var(--text-muted);">No history yet. Run an analysis to see it here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pages = {
+            'detect': { title: 'AI Detector', desc: 'Analyze text for AI patterns and linguistic markers.' },
+            'batch': { title: 'Batch Analysis', desc: 'Process multiple documents simultaneously.' },
+            'robust': { title: 'Robustness Lab', desc: 'Stress test the detector against adversarial attacks.' },
+            'trainer': { title: 'Training Center', desc: 'Manage and retrain detection models.' },
+            'history': { title: 'Analysis History', desc: 'Review your past detection results.' }
+        };
+
+        function switchPage(id) {
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(id + '-page').classList.add('active');
+            event.currentTarget.classList.add('active');
+
+            document.getElementById('current-page-title').innerText = pages[id].title;
+            document.getElementById('current-page-desc').innerText = pages[id].desc;
+
+            if (id === 'history') loadHistory();
         }
-        if (data.error) {
-          showError(data.error);
-          return;
+
+        function clearInput() {
+            document.getElementById('detect-input').value = '';
+            document.getElementById('result-container').style.display = 'none';
         }
-        showResult(data);
-        setStatus('Done.');
-      } catch (e) {
-        showError('Network error: ' + e.message);
-        setStatus('');
-      } finally {
-        analyzeBtn.disabled = false;
-      }
-    }
 
-    function clearAll() {
-      input.value = '';
-      statusEl.textContent = '';
-      hideError();
-      resultEl.classList.add('hidden');
-      input.focus();
-    }
+        async function runAnalysis() {
+            const text = document.getElementById('detect-input').value;
+            if (!text.trim()) return;
 
-    analyzeBtn.addEventListener('click', analyze);
-    clearBtn.addEventListener('click', clearAll);
-    input.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'Enter') analyze();
-    });
-  </script>
+            const btn = document.getElementById('analyze-btn');
+            const loader = document.getElementById('analyze-loader');
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            try {
+                // 1. Basic Analysis
+                const res = await fetch('/api/detection/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+
+                // 2. Cross-Lingual Drift
+                const resCL = await fetch('/api/detection/analyze_crosslingual', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const dataCL = await resCL.json();
+
+                displayResults(data, dataCL);
+                saveToHistory(data);
+            } catch (e) {
+                alert('Error: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        }
+
+        function displayResults(data, dataCL) {
+            document.getElementById('result-container').style.display = 'block';
+            const prob = Math.round(data.ai_probability * 100);
+
+            document.getElementById('prob-text').innerText = prob + '%';
+            document.getElementById('prob-circle-ui').style.borderColor = prob > 60 ? 'var(--danger)' : 'var(--accent)';
+
+            const badge = document.getElementById('result-badge');
+            badge.innerText = data.is_ai_generated ? 'AI GENERATED' : 'HUMAN WRITTEN';
+            badge.className = 'badge ' + (data.is_ai_generated ? 'badge-ai' : 'badge-human');
+
+            document.getElementById('lang-text').innerText = data.language_detected;
+            document.getElementById('length-text').innerText = data.text_length + ' chars';
+            document.getElementById('conf-text').innerText = prob > 80 || prob < 20 ? 'High' : 'Moderate';
+
+            // Markers (Simulated for UI if not in API)
+            const burst = data.features?.burstiness?.score || 0.45;
+            document.getElementById('burst-val').innerText = burst.toFixed(2);
+            document.getElementById('burst-fill').style.width = (burst * 100) + '%';
+
+            const drift = dataCL.cross_lingual_drift_score || 0.05;
+            document.getElementById('drift-val').innerText = drift.toFixed(4);
+            document.getElementById('drift-fill').style.width = Math.min(drift * 500, 100) + '%';
+
+            document.getElementById('hi-trans-text').innerText = dataCL.hindi_translation;
+            document.getElementById('back-en-text').innerText = dataCL.back_to_english;
+
+            document.getElementById('explain-text').innerText = data.is_ai_generated
+                ? "The text shows high structural uniformity and low semantic drift, which are strong indicators of AI generation."
+                : "The text exhibits natural linguistic variance and human-like sentence structure.";
+        }
+
+        async function runBatchAnalysis() {
+            const input = document.getElementById('batch-input').value;
+            const texts = input.split('---').map(t => t.trim()).filter(t => t);
+            if (texts.length === 0) return;
+
+            const res = await fetch('/api/detection/predict_batch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ texts })
+            });
+            const data = await res.json();
+
+            const tableBody = document.getElementById('batch-table-body');
+            tableBody.innerHTML = '';
+            document.getElementById('batch-results-card').style.display = 'block';
+
+            data.results.forEach(r => {
+                const row = `
+                    <tr>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${r.text}</td>
+                        <td>${r.pred_lang}</td>
+                        <td>${Math.round(r.prob_ai * 100)}%</td>
+                        <td><span class="badge ${r.pred_label ? 'badge-ai' : 'badge-human'}">${r.pred_label ? 'AI' : 'HUMAN'}</span></td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        async function runRobustness() {
+            const text = document.getElementById('robust-input').value;
+            if (!text) return;
+
+            const res = await fetch('/api/eval/eval/robustness', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, target_languages: ['hi'], attack_type: 'translation' })
+            });
+            const data = await res.json();
+
+            document.getElementById('robust-metrics-ui').style.display = 'block';
+            document.getElementById('stab-score').innerText = (1 - data.probability_variance).toFixed(3);
+            document.getElementById('flip-count').innerText = Math.round(data.flip_fraction * data.variants_evaluated.length);
+
+            const variantsDiv = document.getElementById('robust-variants');
+            variantsDiv.innerHTML = '<h4>Test Variants:</h4>';
+            data.variants_evaluated.forEach(v => {
+                variantsDiv.innerHTML += `
+                    <div class="variant-card">
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${v.language.toUpperCase()}</strong>
+                            <span class="badge ${v.label ? 'badge-ai' : 'badge-human'}">${Math.round(v.ai_probability * 100)}%</span>
+                        </div>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">${v.text}</p>
+                    </div>
+                `;
+            });
+        }
+
+        async function launchTraining() {
+            const epochs = document.getElementById('train-epochs').value;
+            const res = await fetch('/api/trainer/experiments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dataset_path: 'internal_v2.csv', epochs: parseInt(epochs), learning_rate: 0.00002, languages: ['en', 'hi'] })
+            });
+            const data = await res.json();
+
+            document.getElementById('training-status').style.display = 'block';
+            document.getElementById('job-id').innerText = data.experiment_id;
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                document.getElementById('job-progress').style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    document.getElementById('job-status').innerText = 'COMPLETED';
+                    document.getElementById('job-status').style.color = 'var(--accent)';
+                }
+            }, 1000);
+        }
+
+        function saveToHistory(data) {
+            let history = JSON.parse(localStorage.getItem('ai_history') || '[]');
+            history.unshift({
+                text: data.text.substring(0, 50) + '...',
+                prob: Math.round(data.ai_probability * 100),
+                label: data.is_ai_generated,
+                date: new Date().toLocaleString()
+            });
+            localStorage.setItem('ai_history', JSON.stringify(history.slice(0, 10)));
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('ai_history') || '[]');
+            const list = document.getElementById('history-list');
+            if (history.length === 0) return;
+
+            list.innerHTML = '';
+            history.forEach(item => {
+                list.innerHTML += `
+                    <div class="history-item">
+                        <div>
+                            <div style="font-weight: 600;">${item.text}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">${item.date}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <span style="font-weight: 700;">${item.prob}%</span>
+                            <span class="badge ${item.label ? 'badge-ai' : 'badge-human'}">${item.label ? 'AI' : 'HUMAN'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    </script>
 </body>
+
 </html>

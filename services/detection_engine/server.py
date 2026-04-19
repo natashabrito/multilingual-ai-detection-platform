@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from multilingual_ai_detector import MultilingualAIDetector
+from engine import MultilingualAIDetector
 
 
 app = FastAPI(
@@ -22,6 +22,10 @@ class CrossLingualRequest(BaseModel):
     text: str
 
 
+class PredictBatchRequest(BaseModel):
+    texts: list[str]
+
+
 @app.get("/")
 def health():
     return {
@@ -39,6 +43,20 @@ def analyze_text(request: AnalyzeRequest):
 @app.post("/analyze_crosslingual")
 def analyze_crosslingual(request: CrossLingualRequest):
     return detector.analyze_crosslingual(request.text)
+
+
+@app.post("/predict_batch")
+def predict_batch(request: PredictBatchRequest):
+    results = []
+    for text in request.texts:
+        res = detector.analyze(text)
+        results.append({
+            "text": text,
+            "prob_ai": res["ai_probability"],
+            "pred_label": res["is_ai_generated"],
+            "pred_lang": res["language_detected"]
+        })
+    return {"results": results}
 
 
 @app.get("/models")

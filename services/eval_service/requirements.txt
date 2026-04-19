@@ -1,9 +1,11 @@
 fastapi
 uvicorn
 pydantic
-torch
+requests
 transformers
 sentence-transformers
 numpy
-scikit-learn
+sentencepiece
+sacremoses
+protobuf
 

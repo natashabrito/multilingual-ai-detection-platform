@@ -21,7 +21,7 @@ class ExperimentConfig(BaseModel):
 
 @app.post("/experiments")
 def create_new_experiment(config: ExperimentConfig):
-    experiment_id = create_experiment(config.dict())
+    experiment_id = create_experiment(config.model_dump())
     return {
         "experiment_id": experiment_id,
         "status": "started",

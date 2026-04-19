@@ -1,5 +1,5 @@
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict
 
 from sentence_transformers import SentenceTransformer
@@ -22,7 +22,7 @@ class MultilingualAIDetector:
 
     def __init__(self) -> None:
         self.model_version = "v2.0.0-crosslingual"
-        self.loaded_at = datetime.utcnow()
+        self.loaded_at = datetime.now(timezone.utc)
 
         print("[INFO] Loading embedding model...")
         self.embedding_model = SentenceTransformer(
@@ -59,7 +59,7 @@ class MultilingualAIDetector:
             "ai_probability": ai_probability,
             "is_ai_generated": is_ai,
             "model_version": self.model_version,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     # ------------------------------------------------
@@ -113,7 +113,7 @@ class MultilingualAIDetector:
             "similarities": similarities,
             "cross_lingual_drift_score": drift_score,
             "model_version": self.model_version,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     def get_model_info(self) -> Dict[str, Any]:
