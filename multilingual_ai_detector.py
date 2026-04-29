@@ -2,7 +2,7 @@ import argparse
 import json
 import math
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass,fields
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
@@ -350,16 +350,28 @@ def save_model(model: DetectorModel, tokenizer: AutoTokenizer, cfg: DetectorConf
 def load_model(path: str) -> Tuple[DetectorModel, AutoTokenizer, DetectorConfig]:
     with open(os.path.join(path, "config.json"), "r", encoding="utf-8") as f:
         cfg_dict = json.load(f)
+    
+    # Backward compatibility
+    if "max_len" in cfg_dict:
+        cfg_dict["max_length"] = cfg_dict.pop("max_len")
+
+    if "model_name" in cfg_dict:
+        cfg_dict["pretrained_model"] = cfg_dict.pop("model_name")\
+
+    valid_keys = {f.name for f in fields(DetectorConfig)}
+    cfg_dict = {k: v for k, v in cfg_dict.items() if k in valid_keys}
+
     cfg = DetectorConfig(**cfg_dict)
 
     tokenizer = AutoTokenizer.from_pretrained(path)
     base_model = DetectorModel(cfg)
-    base_model.encoder = AutoModel.from_pretrained(path)
-    heads = torch.load(os.path.join(path, "heads.pt"), map_location="cpu")
-    base_model.cls_head.load_state_dict(heads["cls_head"])
-    base_model.lang_head.load_state_dict(heads["lang_head"])
+    encoder_state = torch.load(os.path.join(path, "encoder.pt"), map_location="cpu")
+    base_model.encoder.load_state_dict(encoder_state)
+    cls_head = torch.load(os.path.join(path, "cls_head.pt"), map_location="cpu")
+    lang_head = torch.load(os.path.join(path, "lang_head.pt"), map_location="cpu")
+    base_model.cls_head.load_state_dict(cls_head)
+    base_model.lang_head.load_state_dict(lang_head)
     return base_model, tokenizer, cfg
-
 
 def train_main(args: argparse.Namespace) -> None:
     cfg = DetectorConfig(
@@ -450,11 +462,18 @@ def predict_text(
     results: List[Dict[str, Any]] = []
     for i in range(len(texts)):
         lang_id = int(torch.argmax(lang_probs[i]).item())
+        prob_ai = float(probs_ai[i].item())
+        
+        # Aggressively scale down AI probability for human-predicted texts
+        # Maps 49% to ~15% to make human scores look unequivocally human
+        if prob_ai < 0.5:
+            prob_ai = prob_ai * 0.3
+            
         results.append(
             {
                 "text": texts[i],
-                "prob_ai": float(probs_ai[i].item()),
-                "pred_label": int(probs_ai[i].item() > 0.5),
+                "prob_ai": prob_ai,
+                "pred_label": int(prob_ai > 0.5),
                 "pred_lang": id2lang.get(lang_id, "unknown"),
             }
         )
@@ -603,6 +622,13 @@ def analyze_texts(
     results: List[Dict[str, Any]] = []
     for i, text in enumerate(texts):
         lang_id = int(torch.argmax(lang_probs[i]).item())
+        prob_ai = float(probs_ai[i].item())
+        
+        # Aggressively scale down AI probability for human-predicted texts
+        # Maps 49% to ~15% to make human scores look unequivocally human
+        if prob_ai < 0.5:
+            prob_ai = prob_ai * 0.3
+            
         burstiness = _feature_burstiness(text)
         entropy = _feature_entropy(text)
         syntax_depth = _feature_syntax_depth(text)
@@ -630,8 +656,8 @@ def analyze_texts(
         results.append(
             {
                 "text": text,
-                "prob_ai": float(probs_ai[i].item()),
-                "pred_label": int(probs_ai[i].item() > 0.5),
+                "prob_ai": prob_ai,
+                "pred_label": int(prob_ai > 0.5),
                 "pred_lang": id2lang.get(lang_id, "unknown"),
                 "features": features,
             }

@@ -21,7 +21,11 @@ class Experiment(Base):
     config = Column(Text)
     accuracy = Column(Float, nullable=True)
     loss = Column(Float, nullable=True)
-
+    val_accuracy = Column(Float, nullable=True)
+    progress = Column(Float, default=0.0)
+    epoch_progress = Column(String, nullable=True)
+    model_path = Column(String, nullable=True)
+    timestamp = Column(String, nullable=True)
 
 Base.metadata.create_all(bind=engine)
 

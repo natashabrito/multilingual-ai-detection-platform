@@ -9,6 +9,8 @@ from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 
 from multilingual_ai_detector import analyze_texts, predict_text
+import multilingual_ai_detector
+print("Using detector file:", multilingual_ai_detector.__file__)
 
 
 MODEL_PATH = os.environ.get("DETECTOR_MODEL_PATH", "checkpoints/best")
@@ -24,7 +26,7 @@ class PredictBatchRequest(BaseModel):
 
 
 app = FastAPI(
-    title="Multilingual AI Text Detector",
+    title="VeriText AI",
     description=(
         "Detects whether text is AI-generated or human-written across "
         "English, Hindi and Hinglish, and predicts the language."

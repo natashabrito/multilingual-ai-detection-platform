@@ -1,4 +1,5 @@
 import json
+import threading
 
 from database import Experiment, SessionLocal
 from worker import run_experiment
@@ -15,13 +16,14 @@ def create_experiment(config):
     db.add(experiment)
     db.commit()
     db.refresh(experiment)
-
-    # Run synchronously for now; can be moved to a background worker/queue later
-    run_experiment(experiment.id, config)
-
+    experiment_id = experiment.id
     db.close()
 
-    return experiment.id
+    # Run in a background thread so we don't block the API
+    t = threading.Thread(target=run_experiment, args=(experiment_id, config))
+    t.start()
+
+    return experiment_id
 
 
 def get_experiment(experiment_id):
@@ -37,6 +39,11 @@ def get_experiment(experiment_id):
         "status": experiment.status,
         "accuracy": experiment.accuracy,
         "loss": experiment.loss,
+        "val_accuracy": experiment.val_accuracy,
+        "progress": experiment.progress,
+        "epoch_progress": experiment.epoch_progress,
+        "model_path": experiment.model_path,
+        "timestamp": experiment.timestamp,
         "config": experiment.config,
     }
 

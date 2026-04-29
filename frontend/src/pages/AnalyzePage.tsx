@@ -8,7 +8,9 @@ type FeatureCardProps = {
   score?: number | null;
   explanation?: string | null;
 };
-
+function safeText(val) {
+  return val ? val.toString() : "";
+}
 const FeatureCard = ({ title, color, score, explanation }: FeatureCardProps) => {
   const pct = score != null ? Math.max(0, Math.min(score, 1)) * 100 : 0;
   return (

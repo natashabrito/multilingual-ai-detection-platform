@@ -83,6 +83,20 @@ export function useStatsStore() {
     });
   };
 
-  return { stats, recordSample };
+  const clearStats = () => {
+    const defaultStats = {
+      totalTexts: 0,
+      aiCount: 0,
+      humanCount: 0,
+      mostCommonLang: null,
+      avgAiProb: 0
+    };
+    setStats(defaultStats);
+    if (typeof window !== "undefined") {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  };
+
+  return { stats, recordSample, clearStats };
 }
 

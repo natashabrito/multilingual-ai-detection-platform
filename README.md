@@ -1,4 +1,4 @@
-## Multilingual AI Detection Platform
+## VeriText AI
 
 Multilingual, paraphrase-resistant AI-generated text detection system with:
 

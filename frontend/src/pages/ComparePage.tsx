@@ -6,7 +6,9 @@ type CompareResult = {
 };
 
 const API_BASE = "/api/detect";
-
+function safeText(val) {
+  return val ? val.toString() : "";
+}
 function ComparePage() {
   const [textA, setTextA] = useState("");
   const [textB, setTextB] = useState("");

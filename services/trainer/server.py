@@ -13,10 +13,12 @@ app = FastAPI(
 
 
 class ExperimentConfig(BaseModel):
-    dataset_path: str
+    dataset_name: str
+    dataset_content: str = ""
     epochs: int
     learning_rate: float
     languages: List[str]
+    task_type: str = "Binary classification"
 
 
 @app.post("/experiments")

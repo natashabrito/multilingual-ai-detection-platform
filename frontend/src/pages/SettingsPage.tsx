@@ -1,5 +1,7 @@
 import { useState } from "react";
-
+function safeText(val) {
+  return val ? val.toString() : "";
+}
 function SettingsPage() {
   const [academicMode, setAcademicMode] = useState(false);
 

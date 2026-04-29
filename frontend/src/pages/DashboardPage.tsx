@@ -10,19 +10,30 @@ const cardVariants = {
   })
 };
 
+function safeText(val) {
+  return val ? val.toString() : "";
+}
 function DashboardPage() {
-  const { stats } = useStatsStore();
+  const { stats, clearStats } = useStatsStore();
 
   return (
     <div className="space-y-6">
       <motion.div
-        className="glass p-5 sm:p-6 card-tilt"
+        className="glass p-5 sm:p-6 card-tilt relative"
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
       >
+        <div className="absolute top-5 right-5 sm:top-6 sm:right-6">
+          <button 
+            onClick={clearStats} 
+            className="px-3 py-1.5 text-xs bg-white/10 hover:bg-white/20 rounded-md transition-colors text-slate-300"
+          >
+            Clear Stats
+          </button>
+        </div>
         <p className="text-sm text-slate-300 mb-1">Welcome</p>
         <h2 className="text-xl font-semibold mb-2">
-          Multilingual AI Detection Console
+          VeriText AI Console
         </h2>
         <p className="text-sm text-slate-400">
           Paste text, compare variants, and probe cross-lingual robustness for

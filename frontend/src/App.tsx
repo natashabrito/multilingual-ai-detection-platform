@@ -5,6 +5,9 @@ import ComparePage from "./pages/ComparePage";
 import DashboardPage from "./pages/DashboardPage";
 import SettingsPage from "./pages/SettingsPage";
 
+function safeText(val) {
+  return val ? val.toString() : "";
+}
 const navLinkClass =
   "px-3 py-1.5 rounded-full text-sm font-medium transition-colors";
 
@@ -19,7 +22,7 @@ function App() {
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              Multilingual AI Detection Platform
+              VeriText AI
             </motion.h1>
             <motion.p
               className="text-xs sm:text-sm text-slate-400"

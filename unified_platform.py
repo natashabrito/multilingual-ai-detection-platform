@@ -23,7 +23,7 @@ except ImportError as e:
     sys.exit(1)
 
 app = FastAPI(
-    title="Multilingual AI Detection Unified Platform",
+    title="VeriText AI Unified Platform",
     description="A unified gateway for detection, training, and evaluation.",
     version="1.0.0"
 )

@@ -2,7 +2,7 @@ import numpy as np
 import requests
 
 
-DETECTION_ENGINE_URL = "http://localhost:8000/analyze"
+DETECTION_ENGINE_URL = "http://localhost:8000/api/detection/analyze"
 
 
 class RobustnessEvaluator:
@@ -58,6 +58,7 @@ class RobustnessEvaluator:
 
         return {
             "original_probability": original_prob,
+            "original_label": original_label,
             "probability_variance": prob_variance,
             "flip_fraction": flip_fraction,
             "variants_evaluated": results,

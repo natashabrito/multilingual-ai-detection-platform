@@ -1,4 +1,4 @@
-# How to Train & Run the Multilingual AI Detection Platform
+# How to Train & Run VeriText AI
 
 ## Prerequisites
 
@@ -58,7 +58,7 @@ MAX_LEN = 256          # token length (increase for longer texts)
 BATCH_SIZE = 8         # increase if you have more GPU memory
 LR = 2e-5              # learning rate
 EPOCHS = 3             # more epochs = better but slower
-MAX_SAMPLES_PER_LANG = 2000  # increase for more data per language
+MAX_SAMPLES_PER_LANG = 2000 # increase for more data per language
 ```
 
 If you have a good GPU, bump `MAX_SAMPLES_PER_LANG` to 5000+ and `EPOCHS` to 5.

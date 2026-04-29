@@ -1,10 +1,13 @@
 __pycache__/
 *.pyc
-.venv/
+venv/
 .DS_Store
 experiments.db
 .env
 checkpoints/
 output/
-datasets/hinglish_conversations.csv
-
+*.pt
+node_modules/
+*.zip
+*.bin
+venv_new/

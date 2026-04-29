@@ -31,20 +31,16 @@ class AttackGenerator:
     ):
         variants = []
 
-        if attack_type == "translation":
-            for lang in target_languages:
-                if lang == "hi":
-                    translated = self.translator_en_hi(text)[0]["translation_text"]
-                    variants.append({"language": "hi", "text": translated})
-
-        if attack_type == "paraphrase":
-            para = self.paraphraser(
+        if attack_type in ("paraphrase", "all"):
+            outputs = self.paraphraser(
                 f"paraphrase: {text}",
                 max_length=128,
                 do_sample=True,
-            )[0]["generated_text"]
-
-            variants.append({"language": "en", "text": para})
+                num_return_sequences=2,
+                temperature=0.7,
+            )
+            for out in outputs:
+                variants.append({"language": "same", "text": out["generated_text"]})
 
         return variants
 
