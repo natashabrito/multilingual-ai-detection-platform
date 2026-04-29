@@ -1,13 +1,41 @@
+# Python
 __pycache__/
 *.pyc
+
+# Virtual environments
 venv/
-.DS_Store
-experiments.db
+venv_new/
+env/
+
+# Environment files
 .env
+
+# OS files
+.DS_Store
+
+# Databases
+experiments.db
+
+# ML models
+*.pt
+*.pkl
+*.h5
+
+# Datasets
+*.csv
+
+# Outputs
 checkpoints/
 output/
-*.pt
+
+# Node
 node_modules/
+
+# Archives
 *.zip
 *.bin
-venv_new/
+
+# System / compiled binaries
+*.dll
+*.lib
+*.exe
