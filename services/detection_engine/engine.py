@@ -160,8 +160,8 @@ class MultilingualAIDetector:
             "en_vs_hi_back_en": sim_back,
         }
 
-        # Step 4: Drift score = variance of similarity values
-        drift_score = float(np.var(list(similarities.values())))
+        # Step 4: Drift score = semantic drift from original meaning
+        drift_score = float(max(0.0, 1.0 - sim_back))
 
         return {
             "original_text": text or "",
